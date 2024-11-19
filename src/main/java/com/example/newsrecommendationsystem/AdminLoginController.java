@@ -22,6 +22,9 @@ public class AdminLoginController {
     @FXML
     private Button loginButton;
 
+    @FXML
+    private Button backButton;  // Add the back button as a field
+
     // Handle login logic when the user clicks on the Login button
     @FXML
     public void handleLogin() {
@@ -64,6 +67,26 @@ public class AdminLoginController {
             alert.setTitle("Error");
             alert.setHeaderText(null);
             alert.setContentText("An error occurred while loading the Admin Dashboard.");
+            alert.showAndWait();
+        }
+    }
+
+    // Handle the back button click to navigate to the Choose Person menu
+    @FXML
+    public void handleBackClick() {
+        try {
+            // Assuming the "Choose Person" menu FXML is called "ChoosePerson.fxml"
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Choose_Person.fxml"));
+            Stage stage = (Stage) backButton.getScene().getWindow(); // Get current window
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene); // Switch to the Choose Person menu scene
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while loading the Choose Person menu.");
             alert.showAndWait();
         }
     }
