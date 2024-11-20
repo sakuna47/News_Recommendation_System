@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.newsrecommendationsystem.UserViewController"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.UserViewController">
+   <children>
+      <Label layoutX="143.0" layoutY="37.0" text="What Do You Want To Read">
+         <font>
+            <Font size="29.0" />
+         </font>
+      </Label>
+      <Button fx:id="Business" layoutX="163.0" layoutY="160.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Business" />
+      <Button fx:id="entertainment" layoutX="339.0" layoutY="200.0" mnemonicParsing="false" text="Entertainment" />
+      <Button fx:id="sport" layoutX="163.0" layoutY="200.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="sport" />
+      <Button fx:id="health" layoutX="163.0" layoutY="243.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Health" />
+      <Button fx:id="WNews" layoutX="339.0" layoutY="243.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="World News" />
+      <Button fx:id="politics" layoutX="339.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Politics" />
+      <Button fx:id="weather" layoutX="339.0" layoutY="160.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Weather" />
+      <Button fx:id="LNews" layoutX="163.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Local News" />
+      <Button fx:id="recommendation" layoutX="223.0" layoutY="307.0" mnemonicParsing="false" text="Recommendations" />
+      <Button fx:id="back2login" layoutX="43.0" layoutY="346.0" mnemonicParsing="false" onAction="#onback2logincick" text="Back" />
+   </children>
 </AnchorPane>

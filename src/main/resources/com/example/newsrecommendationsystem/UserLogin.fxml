@@ -15,10 +15,10 @@
          </font>
       </Label>
       <Button fx:id="Back_Login" layoutX="22.0" layoutY="360.0" mnemonicParsing="false" onAction="#handleBackClick" text="Back" />
-      <TextField fx:id="L_User_Name" layoutX="228.0" layoutY="113.0" promptText="email" />
-      <PasswordField fx:id="L_Password" layoutX="229.0" layoutY="161.0" promptText="password" />
+      <TextField fx:id="L_emailField" layoutX="228.0" layoutY="113.0" promptText="email" />
+      <PasswordField fx:id="L_password" layoutX="229.0" layoutY="161.0" promptText="password" />
       <Button fx:id="Sign" layoutX="243.0" layoutY="294.0" mnemonicParsing="false" onAction="#handleSignUpClick" prefHeight="30.0" text="Sign up" />
-      <Button fx:id="Login" layoutX="228.0" layoutY="208.0" mnemonicParsing="false" text="login" />
+      <Button fx:id="Login" layoutX="228.0" layoutY="208.0" mnemonicParsing="false" onAction="#handleLoginClick" text="login" />
       <Label layoutX="120.0" layoutY="117.0" text="Enter Email" />
       <Label layoutX="120.0" layoutY="165.0" text="Enter Password" />
       <Label layoutX="104.0" layoutY="301.0" text="If you havn't account" />
