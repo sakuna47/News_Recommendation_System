@@ -19,7 +19,7 @@
       <Button fx:id="WNews" layoutX="339.0" layoutY="243.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="World News" />
       <Button fx:id="politics" layoutX="339.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Politics" />
       <Button fx:id="weather" layoutX="339.0" layoutY="160.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Weather" />
-      <Button fx:id="LNews" layoutX="163.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Local News" />
+      <Button fx:id="LNews" layoutX="163.0" layoutY="117.0" mnemonicParsing="false" onAction="#onLocalNewsClick" prefHeight="26.0" prefWidth="91.0" text="Local News" />
       <Button fx:id="recommendation" layoutX="223.0" layoutY="307.0" mnemonicParsing="false" text="Recommendations" />
       <Button fx:id="back2login" layoutX="43.0" layoutY="346.0" mnemonicParsing="false" onAction="#onback2logincick" text="Back" />
       <Button fx:id="deleteAccount" layoutX="463.0" layoutY="346.0" mnemonicParsing="false" style="-fx-background-color: lightblue;" text="Delete my account" />
