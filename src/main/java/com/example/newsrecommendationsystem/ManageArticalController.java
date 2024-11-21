@@ -4,21 +4,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 
-public class AdminViewController {
+public class ManageArticalController {
 
     @FXML
-    private Button back2AdminLogin;
+    private Button back2AdminView;
 
     @FXML
-    private Button generateReport;
+    private Button delete;
 
     @FXML
-    private Button mangeArticals;
+    private Button next;
 
     @FXML
-    private Button removeUsers;
+    private Button previous;
 
     @FXML
-    private TextArea users;
+    private TextArea viewArticals;
 
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.AriticalViewController">
+   <children>
+      <TextArea fx:id="articals" layoutX="11.0" layoutY="45.0" prefHeight="266.0" prefWidth="578.0" />
+      <Button fx:id="previous" layoutX="185.0" layoutY="322.0" mnemonicParsing="false" text="Previous" />
+      <Button fx:id="like" layoutX="257.0" layoutY="322.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="51.0" text="Like" />
+      <Button fx:id="rate" layoutX="376.0" layoutY="322.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="61.0" text="Rate" />
+      <Button fx:id="dislike" layoutX="316.0" layoutY="322.0" mnemonicParsing="false" text="Dislike" />
+      <Button fx:id="next" layoutX="450.0" layoutY="322.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="51.0" text="Next" />
+      <Button fx:id="back2UserMenu" layoutX="27.0" layoutY="361.0" mnemonicParsing="false" text="Back to menu" />
+   </children>
+</AnchorPane>

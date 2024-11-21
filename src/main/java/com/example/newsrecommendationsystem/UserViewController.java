@@ -41,6 +41,9 @@ public class UserViewController {
     private Button weather;
 
     @FXML
+    private Button deleteAccount;
+
+    @FXML
     void onback2logincick(ActionEvent event) {
         try {
             // Load the login page FXML

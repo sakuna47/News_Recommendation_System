@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.UserViewController">
    <children>
       <Label layoutX="143.0" layoutY="37.0" text="What Do You Want To Read">
@@ -23,5 +22,6 @@
       <Button fx:id="LNews" layoutX="163.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Local News" />
       <Button fx:id="recommendation" layoutX="223.0" layoutY="307.0" mnemonicParsing="false" text="Recommendations" />
       <Button fx:id="back2login" layoutX="43.0" layoutY="346.0" mnemonicParsing="false" onAction="#onback2logincick" text="Back" />
+      <Button fx:id="deleteAccount" layoutX="463.0" layoutY="346.0" mnemonicParsing="false" style="-fx-background-color: lightblue;" text="Delete my account" />
    </children>
 </AnchorPane>
