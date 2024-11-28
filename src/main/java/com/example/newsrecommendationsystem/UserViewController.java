@@ -88,6 +88,31 @@ public class UserViewController {
             e.printStackTrace();
         }
     }
+    @FXML
+    void onRecommendationClick(ActionEvent event) {
+        try {
+            // Instantiate ArticleRecommender
+            ArticleRecommender recommender = new ArticleRecommender();
+
+            // Fetch recommendations for the logged-in user
+            List<Document> recommendedArticles = recommender.recommendArticles(SessionManager.getInstance().getUsername());
+
+            // Load ArticalView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ArticalView.fxml"));
+            AnchorPane articlePage = loader.load();
+
+            // Pass the recommended articles to ArticalViewController
+            ArticalViewController controller = loader.getController();
+            controller.setArticles(recommendedArticles);
+
+            // Show the article view
+            Stage stage = (Stage) recommendation.getScene().getWindow();
+            stage.setScene(new Scene(articlePage));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void onDeleteAccountClick(ActionEvent event) {

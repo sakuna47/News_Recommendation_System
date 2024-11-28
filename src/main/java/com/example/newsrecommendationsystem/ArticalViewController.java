@@ -54,6 +54,7 @@ public class ArticalViewController {
         }
     }
 
+
     private void displayArticle(int index) {
         if (articles != null && index >= 0 && index < articles.size()) {
             currentIndex = index;
