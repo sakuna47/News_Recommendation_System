@@ -1,15 +1,21 @@
 package com.example.newsrecommendationsystem;
 
-import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import org.bson.Document;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.bson.Document;
+
+import java.util.List;
+import java.util.Optional;
 
 public class UserViewController {
 
@@ -46,23 +52,14 @@ public class UserViewController {
     @FXML
     private Button deleteAccount;
 
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-
     public UserViewController() {
-        // Initialize MongoDB client
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
-        database = mongoClient.getDatabase("CwOOd");
     }
 
     @FXML
     void onback2logincick(ActionEvent event) {
         try {
-            // Load the login page FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("UserLogin.fxml"));
             AnchorPane loginPage = loader.load();
-
-            // Set the scene with the login page
             Stage stage = (Stage) back2login.getScene().getWindow();
             stage.setScene(new Scene(loginPage));
             stage.show();
@@ -72,36 +69,84 @@ public class UserViewController {
     }
 
     @FXML
-    void onLocalNewsClick(ActionEvent event) {
+    void onCategoryClick(ActionEvent event) {
         try {
-            // Fetch all articles to debug and check the categories
-            MongoCollection<Document> collection = database.getCollection("Articles");
+            Button clickedButton = (Button) event.getSource();
+            String category = clickedButton.getText();
+            JaccardArticleCategorizer categorizer = new JaccardArticleCategorizer();
+            List<Document> articles = categorizer.getArticlesByCategory(category);
 
-            // Fetch all articles to check categories
-            FindIterable<Document> allArticles = collection.find();
-            allArticles.forEach(doc -> System.out.println(doc.getString("category"))); // Debugging line
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ArticalView.fxml"));
+            AnchorPane articlePage = loader.load();
+            ArticalViewController controller = loader.getController();
+            controller.setArticles(articles);
 
-            // Query for the category "Local News" (case-insensitive) and also trim whitespaces
-            Document localNews = collection.find(Filters.regex("category", "^\\s*Local News\\s*$", "i")).first();
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.setScene(new Scene(articlePage));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            if (localNews != null) {
-                System.out.println("Found Local News article: " + localNews);  // Debugging line
+    @FXML
+    void onDeleteAccountClick(ActionEvent event) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Are you sure you want to delete your account?");
+            alert.setContentText("This action is irreversible.");
 
-                // Load ArticalView.fxml to show the article
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("ArticalView.fxml"));
-                AnchorPane articalViewPage = loader.load();
-
-                // Pass the article content to ArticalViewController
-                ArticalViewController articalController = loader.getController();
-                articalController.setArticalContent(localNews.getString("content"));
-
-                // Set the scene with ArticalView
-                Stage stage = (Stage) LNews.getScene().getWindow();
-                stage.setScene(new Scene(articalViewPage));
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                deleteUserFromDatabase();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("UserLogin.fxml"));
+                AnchorPane loginPage = loader.load();
+                Stage stage = (Stage) deleteAccount.getScene().getWindow();
+                stage.setScene(new Scene(loginPage));
                 stage.show();
-            } else {
-                System.out.println("No Local News article found in the database.");
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteUserFromDatabase() {
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+
+            // Access the "Users" collection
+            MongoCollection<Document> usersCollection = database.getCollection("Users");
+
+            // Delete the user document from the "Users" collection based on the "name" field
+            long deletedCount = usersCollection.deleteOne(new Document("name", SessionManager.getInstance().getUsername())).getDeletedCount();
+
+            if (deletedCount > 0) {
+                System.out.println("User deleted successfully from the 'Users' collection.");
+            } else {
+                System.out.println("No user found with the given name in the 'Users' collection.");
+            }
+
+            // Additional collections to clean up user-related data
+            MongoCollection<Document> interactionsCollection = database.getCollection("ArticleInteractions");
+            interactionsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+
+            MongoCollection<Document> ratingsCollection = database.getCollection("Ratings");
+            ratingsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+
+            MongoCollection<Document> commentsCollection = database.getCollection("Comments");
+            commentsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+
+            MongoCollection<Document> preferencesCollection = database.getCollection("UserPreferences");
+            preferencesCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+
+            MongoCollection<Document> historyCollection = database.getCollection("UserHistory");
+            historyCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+
+            // Clear the session after successful deletion
+            SessionManager.getInstance().clearSession();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

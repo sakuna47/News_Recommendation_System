@@ -23,27 +23,26 @@ public class AdminLoginController {
     private Button loginButton;
 
     @FXML
-    private Button backButton;  // Add the back button as a field
+    private Button backButton;
 
-    // Handle login logic when the user clicks on the Login button
+    // Handle login logic when the user clicks the Login button
     @FXML
     public void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        // Example hardcoded credentials for demonstration purposes
-        if ("admin".equals(username) && "admin123".equals(password)) {
-            // If credentials match, show success message and proceed to the next scene (Admin Dashboard or Main Menu)
+        // Updated credentials: username = "admin", password = "1234"
+        if ("admin".equals(username) && "1234".equals(password)) {
+            // Show success message and load the Admin View
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Login Success");
             alert.setHeaderText(null);
             alert.setContentText("Successfully logged in as Admin!");
             alert.showAndWait();
 
-            // Load next screen (Admin Dashboard, for example)
-            loadAdminDashboard();
+            loadAdminView();
         } else {
-            // If credentials do not match, show error message
+            // Show error message for incorrect credentials
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Login Failed");
             alert.setHeaderText(null);
@@ -52,32 +51,31 @@ public class AdminLoginController {
         }
     }
 
-    // Load the Admin Dashboard screen after successful login
-    private void loadAdminDashboard() {
+    // Load the Admin View FXML file after successful login
+    private void loadAdminView() {
         try {
-            // Assuming the Admin Dashboard FXML is called "AdminDashboard.fxml"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/AdminDashboard.fxml"));
-            Stage stage = (Stage) usernameField.getScene().getWindow(); // Get current window
+            // Assuming the Admin View FXML is "AdminView.fxml"
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/AdminView.fxml"));
+            Stage stage = (Stage) usernameField.getScene().getWindow(); // Get the current window
             Scene scene = new Scene(loader.load());
-            stage.setScene(scene); // Switch to the Admin Dashboard scene
+            stage.setScene(scene); // Switch to the Admin View scene
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
-            alert.setContentText("An error occurred while loading the Admin Dashboard.");
+            alert.setContentText("An error occurred while loading the Admin View.");
             alert.showAndWait();
         }
     }
 
-    // Handle the back button click to navigate to the Choose Person menu
+    // Handle the Back button click to navigate to the "Choose Person" menu
     @FXML
     public void handleBackClick() {
         try {
-            // Assuming the "Choose Person" menu FXML is called "ChoosePerson.fxml"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Choose_Person.fxml"));
-            Stage stage = (Stage) backButton.getScene().getWindow(); // Get current window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/Choose_Person.fxml"));
+            Stage stage = (Stage) backButton.getScene().getWindow(); // Get the current window
             Scene scene = new Scene(loader.load());
             stage.setScene(scene); // Switch to the Choose Person menu scene
             stage.show();

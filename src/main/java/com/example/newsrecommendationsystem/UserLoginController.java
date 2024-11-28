@@ -24,7 +24,9 @@ public class UserLoginController {
     private TextField L_emailField; // TextField for email input (added)
 
     @FXML
-    private PasswordField L_password; // PasswordField for password input
+    private PasswordField L_password;
+
+    public String curentUser; // PasswordField for password input
 
     // Handle login button click
     @FXML
@@ -85,6 +87,8 @@ public class UserLoginController {
             currentStage.setScene(userViewScene);
             currentStage.setTitle("User View");
             currentStage.show();
+            SessionManager.getInstance().setUsername(L_emailField.getText());
+
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "Failed to load the user view.");

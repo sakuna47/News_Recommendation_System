@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.AdminViewController">
    <children>
       <Label layoutX="113.0" layoutY="22.0" text="Admin, what do you want to do?">
@@ -14,10 +13,10 @@
             <Font size="26.0" />
          </font>
       </Label>
-      <Button fx:id="removeUsers" layoutX="226.0" layoutY="303.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="104.0" text="Remove User" />
-      <Button fx:id="mangeArticals" layoutX="333.0" layoutY="350.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="104.0" text="Mange Articals" />
+      <Button fx:id="removeUsers" layoutX="226.0" layoutY="303.0" mnemonicParsing="false" onAction="#handleRemoveUserClick" prefHeight="26.0" prefWidth="104.0" text="Remove User" />
+      <Button fx:id="addArticles" layoutX="333.0" layoutY="350.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="104.0" text="Add Articles" />
       <Button fx:id="generateReport" layoutX="460.0" layoutY="351.0" mnemonicParsing="false" text="Generate Report" />
-      <TextArea fx:id="users" layoutX="14.0" layoutY="89.0" prefHeight="200.0" prefWidth="528.0" />
-      <Button fx:id="back2AdminLogin" layoutX="14.0" layoutY="351.0" mnemonicParsing="false" text="Back" />
+      <TextArea fx:id="users" layoutX="36.0" layoutY="80.0" onDragDetected="#initialize" prefHeight="200.0" prefWidth="528.0" />
+      <Button fx:id="back2AdminLogin" layoutX="14.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleBackClick" text="Back" />
    </children>
 </AnchorPane>

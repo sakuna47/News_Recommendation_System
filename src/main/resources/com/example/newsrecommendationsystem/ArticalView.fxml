@@ -4,12 +4,10 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.ArticalViewController">
-   <children>
-      <TextArea fx:id="articals" layoutX="50.0" layoutY="50.0" prefHeight="250.0" prefWidth="500.0" />
-      <Button fx:id="back2UserMenu" layoutX="50.0" layoutY="320.0" mnemonicParsing="false" onAction="#onBackToUserMenuClick" text="Back to User Menu" />
-      <Button fx:id="like" layoutX="200.0" layoutY="320.0" mnemonicParsing="false" text="Like" />
-      <Button fx:id="dislike" layoutX="270.0" layoutY="320.0" mnemonicParsing="false" text="Dislike" />
-      <Button fx:id="next" layoutX="400.0" layoutY="320.0" mnemonicParsing="false" text="Next" />
-   </children>
+<AnchorPane prefHeight="434.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.ArticalViewController">
+   <TextArea fx:id="articals" layoutX="14.0" layoutY="14.0" prefHeight="336.0" prefWidth="578.0" wrapText="true" />
+   <Button fx:id="back2UserMenu" layoutX="14.0" layoutY="396.0" onAction="#onBackToUserMenuClick" text="Back to User Menu" />
+   <Button fx:id="next" layoutX="263.0" layoutY="369.0" onAction="#onNextClick" prefHeight="26.0" prefWidth="61.0" text="Next" />
+   <Button fx:id="previous" layoutX="188.0" layoutY="370.0" onAction="#onPreviousClick" text="Previous" />
+   <Button fx:id="rate" layoutX="385.0" layoutY="369.0" onAction="#onRateClick" prefHeight="26.0" prefWidth="73.0" text="Rate" />
 </AnchorPane>

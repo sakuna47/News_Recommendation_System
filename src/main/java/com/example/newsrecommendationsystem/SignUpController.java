@@ -1,10 +1,7 @@
 package com.example.newsrecommendationsystem;
 
-import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
- // Import BCrypt for password hashing
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +14,8 @@ import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUpController {
 
@@ -30,7 +29,7 @@ public class SignUpController {
     private PasswordField passwordField;
 
     @FXML
-    private PasswordField confirmPasswordField; // Add a confirm password field
+    private PasswordField confirmPasswordField;
 
     /**
      * Handles the sign-up button click. This method collects the user's input,
@@ -55,23 +54,47 @@ public class SignUpController {
             return;
         }
 
+        // Validate email format
+        if (!isValidEmail(email)) {
+            System.out.println("Invalid email format!");
+            return;
+        }
+
         try {
+            // Check if the username already exists
+            MongoCollection<Document> usersCollection = Database.getDatabase().getCollection("Users");
+            Document existingUser = usersCollection.find(new Document("name", username)).first();
+            if (existingUser != null) {
+                System.out.println("Username already taken!");
+                return;
+            }
+
+            // Check if the email already exists
+            Document existingEmail = usersCollection.find(new Document("email", email)).first();
+            if (existingEmail != null) {
+                System.out.println("Email is already associated with an account!");
+                return;
+            }
+
             // Hash the password using BCrypt
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-            // Get the "users" collection
-            MongoCollection<Document> usersCollection = Database.getDatabase().getCollection("Users");
 
             // Create a new user document
             Document user = new Document()
                     .append("name", username)
                     .append("email", email)
-                    .append("password", hashedPassword); // Store hashed password
+                    .append("password", hashedPassword)
+                    .append("emailVerified", false); // Flag for email verification
 
             // Insert the document into the collection
             usersCollection.insertOne(user);
 
             System.out.println("User registered successfully!");
+
+            // Simulate email verification (you should integrate actual email service here)
+            sendVerificationEmail(email);
+
+            System.out.println("Verification email sent to: " + email);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,5 +124,30 @@ public class SignUpController {
             e.printStackTrace();
             System.err.println("Error loading UserLogin.fxml.");
         }
+    }
+
+    /**
+     * Validates the email format using a regular expression.
+     * @param email The email to validate.
+     * @return true if the email format is valid, false otherwise.
+     */
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    /**
+     * Simulates sending a verification email to the user.
+     * In a real scenario, you would integrate an email service like SMTP or a third-party service.
+     * @param email The user's email.
+     */
+    private void sendVerificationEmail(String email) {
+        // Simulate the email sending process
+        System.out.println("Verification email sent to " + email + ". Please check your inbox.");
+
+        // You can implement actual email service here
+        // For example, use JavaMail API or a third-party service like SendGrid, Mailgun, etc.
     }
 }
