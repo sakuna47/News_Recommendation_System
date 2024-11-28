@@ -17,13 +17,20 @@ import java.util.List;
 public class AdminViewController {
 
     @FXML
-    private Button back2AdminLogin; // The Back button defined in the FXML file
+    private Button back2AdminLogin;// The Back button defined in the FXML file
+
+    @FXML
+    private Button adminViewArticles;
+
 
     @FXML
     private Button removeUsers; // Button to remove a selected user
 
     @FXML
     private TextArea users; // TextArea to display user information
+
+    @FXML
+    private Button addArticles; // Button to add articles
 
     // MongoDB connection details
     private static final String DATABASE_NAME = "CwOOD";
@@ -168,6 +175,45 @@ public class AdminViewController {
             alert.setTitle("Error");
             alert.setHeaderText(null);
             alert.setContentText("An error occurred while deleting the user.");
+            alert.showAndWait();
+        }
+    }
+    @FXML
+    public void handleViewArticlesClick() {
+        try {
+            // Load the AdminViewArticles.fxml file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/AdminViewArticles.fxml"));
+            Stage stage = (Stage)adminViewArticles .getScene().getWindow(); // Get the current stage
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene); // Set the Admin View Articles scene
+            stage.show(); // Display the new scene
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Show an error alert if loading AdminViewArticles.fxml fails
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while loading the View Articles screen.");
+            alert.showAndWait();
+        }
+    }
+
+    // Handle the Add Articles button click to load AddArticle.fxml
+    @FXML
+    public void handleAddArticleClick() {
+        try {
+            // Load the AddArticle.fxml file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/AddArticle.fxml"));
+            Stage stage = (Stage) addArticles.getScene().getWindow(); // Get the current stage
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene); // Set the AddArticle scene
+            stage.show(); // Display the stage
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while loading the Add Article screen.");
             alert.showAndWait();
         }
     }
