@@ -70,3 +70,51 @@ User rated article with ID: 67890 with rating: 5.
 User logged in with email: anotheruser@example.com.
 User viewed article with ID: 54321.
 User skipped article with ID: 54321.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with ID: 674991469c2c857e439df4bb
+Admin viewed the list of users.
+Admin deleted user with ID: 674991099c2c857e439df4b9
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with ID: 6749975b9a951a60c4b7d6bb
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with ID: 674997d9e333e50b4e857c21
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with ID: 6749989f0802eb7561fa6692
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin accessed the Add Article screen.
+Admin viewed the list of users.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user and interactions with ID: 6749ac0255aa4a339addf7bd
+Admin generated a report.
+Admin generated a report.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with email: sakuna1@gmail.com and 5 associated interactions.
+Admin viewed the list of users.
+Admin generated a report.

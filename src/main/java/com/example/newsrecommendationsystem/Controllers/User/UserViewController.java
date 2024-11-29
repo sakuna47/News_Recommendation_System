@@ -94,6 +94,7 @@ public class UserViewController {
             e.printStackTrace();
         }
     }
+
     @FXML
     void onRecommendationClick(ActionEvent event) {
         try {
@@ -131,13 +132,20 @@ public class UserViewController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 deleteUserFromDatabase();
+
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Account Deleted");
+                successAlert.setHeaderText(null);
+                successAlert.setContentText("Your account and associated interactions have been successfully deleted.");
+                successAlert.showAndWait();
+
+                // Redirect to login page
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/User/UserLogin.fxml"));
                 AnchorPane loginPage = loader.load();
                 Stage stage = (Stage) deleteAccount.getScene().getWindow();
                 stage.setScene(new Scene(loginPage));
                 stage.show();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,32 +158,28 @@ public class UserViewController {
             // Access the "Users" collection
             MongoCollection<Document> usersCollection = database.getCollection("Users");
 
-            // Delete the user document from the "Users" collection based on the "name" field
+            // Delete the user document
             long deletedCount = usersCollection.deleteOne(new Document("name", SessionManager.getInstance().getUsername())).getDeletedCount();
 
             if (deletedCount > 0) {
-                System.out.println("User deleted successfully from the 'Users' collection.");
+                System.out.println("User deleted successfully.");
             } else {
-                System.out.println("No user found with the given name in the 'Users' collection.");
+                System.out.println("User not found in the 'Users' collection.");
             }
 
-            // Additional collections to clean up user-related data
-            MongoCollection<Document> interactionsCollection = database.getCollection("ArticleInteractions");
-            interactionsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+            // List of collections to clean up user interactions
+            String[] interactionCollections = {
+                    "ArticleInteractions", "Ratings", "Comments", "UserPreferences", "UserHistory"
+            };
 
-            MongoCollection<Document> ratingsCollection = database.getCollection("Ratings");
-            ratingsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
+            // Delete user-related data in each collection
+            for (String collectionName : interactionCollections) {
+                MongoCollection<Document> collection = database.getCollection(collectionName);
+                long interactionDeletedCount = collection.deleteMany(new Document("username", SessionManager.getInstance().getUsername())).getDeletedCount();
+                System.out.println(interactionDeletedCount + " documents deleted from " + collectionName);
+            }
 
-            MongoCollection<Document> commentsCollection = database.getCollection("Comments");
-            commentsCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
-
-            MongoCollection<Document> preferencesCollection = database.getCollection("UserPreferences");
-            preferencesCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
-
-            MongoCollection<Document> historyCollection = database.getCollection("UserHistory");
-            historyCollection.deleteMany(new Document("username", SessionManager.getInstance().getUsername()));
-
-            // Clear the session after successful deletion
+            // Clear the session
             SessionManager.getInstance().clearSession();
 
         } catch (Exception e) {

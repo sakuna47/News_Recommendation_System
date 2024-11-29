@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
@@ -54,7 +55,6 @@ public class ArticalViewController {
         }
     }
 
-
     private void displayArticle(int index) {
         if (articles != null && index >= 0 && index < articles.size()) {
             currentIndex = index;
@@ -99,10 +99,10 @@ public class ArticalViewController {
                     saveInteraction("rated", rating); // Save rating interaction
                     articals.setText(articals.getText() + "\n\nYou rated this article: " + rating + "/10");
                 } else {
-                    articals.setText(articals.getText() + "\n\nInvalid rating! Please enter a number between 1 and 10.");
+                    showInvalidRatingAlert(); // Show alert for invalid rating
                 }
             } catch (NumberFormatException e) {
-                articals.setText(articals.getText() + "\n\nInvalid input! Please enter a number.");
+                showInvalidRatingAlert(); // Show alert for invalid input format
             }
         }
     }
@@ -206,5 +206,15 @@ public class ArticalViewController {
                 e.printStackTrace();
             }
         }
+    }
+
+    // Show an alert for invalid rating
+    private void showInvalidRatingAlert() {
+        // Create an alert to show the invalid rating message
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Invalid Rating");
+        alert.setHeaderText("Invalid Rating Input");
+        alert.setContentText("Please enter a number between 1 and 10.");
+        alert.showAndWait();
     }
 }

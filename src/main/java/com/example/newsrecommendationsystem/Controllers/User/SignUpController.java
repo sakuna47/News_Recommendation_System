@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -45,35 +46,36 @@ public class SignUpController {
 
         // Validate input
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            System.out.println("All fields must be filled!");
+            showAlert("Error", "All fields must be filled!", Alert.AlertType.ERROR);
             return;
         }
 
         // Check if the password and confirm password match
         if (!password.equals(confirmPassword)) {
-            System.out.println("Passwords do not match!");
+            showAlert("Error", "Passwords do not match!", Alert.AlertType.ERROR);
             return;
         }
 
         // Validate email format
         if (!isValidEmail(email)) {
-            System.out.println("Invalid email format!");
+            showAlert("Error", "Invalid email format!", Alert.AlertType.ERROR);
             return;
         }
 
         try {
-            // Check if the username already exists
             MongoCollection<Document> usersCollection = Database.getDatabase().getCollection("Users");
+
+            // Check if the username already exists
             Document existingUser = usersCollection.find(new Document("name", username)).first();
             if (existingUser != null) {
-                System.out.println("Username already taken!");
+                showAlert("Error", "Username already taken!", Alert.AlertType.ERROR);
                 return;
             }
 
             // Check if the email already exists
             Document existingEmail = usersCollection.find(new Document("email", email)).first();
             if (existingEmail != null) {
-                System.out.println("Email is already associated with an account!");
+                showAlert("Error", "Email is already associated with an account!", Alert.AlertType.ERROR);
                 return;
             }
 
@@ -90,16 +92,18 @@ public class SignUpController {
             // Insert the document into the collection
             usersCollection.insertOne(user);
 
-            System.out.println("User registered successfully!");
-
-            // Simulate email verification (you should integrate actual email service here)
+            // Simulate email verification
             sendVerificationEmail(email);
 
-            System.out.println("Verification email sent to: " + email);
+            // Success message
+            showAlert("Success",
+                    "User registered successfully!\n\n" +
+                            "Verification email sent to: " + email + ". Please check your inbox.",
+                    Alert.AlertType.INFORMATION);
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Error while saving user to MongoDB.");
+            showAlert("Error", "Error while saving user to MongoDB.", Alert.AlertType.ERROR);
         }
     }
 
@@ -123,7 +127,7 @@ public class SignUpController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error loading UserLogin.fxml.");
+            showAlert("Error", "Error loading UserLogin.fxml.", Alert.AlertType.ERROR);
         }
     }
 
@@ -150,5 +154,20 @@ public class SignUpController {
 
         // You can implement actual email service here
         // For example, use JavaMail API or a third-party service like SendGrid, Mailgun, etc.
+    }
+
+    /**
+     * Utility method to show an alert dialog.
+     *
+     * @param title  The title of the alert.
+     * @param message The content of the alert.
+     * @param alertType The type of the alert (e.g., ERROR, INFORMATION).
+     */
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
