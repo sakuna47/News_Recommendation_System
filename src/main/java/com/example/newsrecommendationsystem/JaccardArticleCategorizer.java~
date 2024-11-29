@@ -1,0 +1,102 @@
+package com.example.newsrecommendationsystem;
+
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class JaccardArticleCategorizer {
+
+    // Category examples (could be defined or fetched from a collection if needed)
+    private final Map<String, String> categoryExamples;
+
+    public JaccardArticleCategorizer() {
+        // Define categories with representative keywords/phrases
+        categoryExamples = new HashMap<>();
+
+        categoryExamples.put("Local News", "community, city, neighborhood, local government, events");
+        categoryExamples.put("Business", "finance, stocks, investment, economy, entrepreneurship");
+        categoryExamples.put("Sports", "football, cricket, Olympics, team, tournament");
+        categoryExamples.put("Health", "fitness, wellness, healthcare, medical, disease");
+        categoryExamples.put("Politics", "government, election, policy, parliament, president");
+        categoryExamples.put("Weather", "rain, heatwave, cyclone, flood, forecast");
+        categoryExamples.put("Entertainment", "movies, music, celebrities, festival, series");
+        categoryExamples.put("World News", "global, international, war, diplomacy, conflict");
+    }
+
+
+    public void categorizeArticlesFromMongo() {
+        // Connect to MongoDB
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+            MongoCollection<Document> articlesCollection = database.getCollection("Articles");
+
+            // Fetch and categorize each article
+            for (Document articleDoc : articlesCollection.find()) {
+                String articleId = articleDoc.getString("id");
+                String content = articleDoc.getString("content");
+                String existingCategory = articleDoc.getString("category");
+
+                // Categorize the article based on its content (using Jaccard similarity)
+                String predictedCategory = categorize(content);
+
+                // Optionally, print or compare the predicted category with the existing one
+                System.out.println("Article ID: " + articleId + " | Existing Category: " + existingCategory +
+                        " | Predicted Category: " + predictedCategory);
+            }
+        }
+    }
+
+    public String categorize(String content) {
+        // Tokenize the article content into a set of words
+        Set<String> articleTokens = tokenize(content);
+
+        String bestCategory = "Uncategorized"; // Default category
+        double maxSimilarity = 0.0;
+
+        // Compare the article tokens with each category's tokens
+        for (Map.Entry<String, String> entry : categoryExamples.entrySet()) {
+            String category = entry.getKey();
+            Set<String> categoryTokens = tokenize(entry.getValue());
+
+            // Compute Jaccard Similarity between article and category tokens
+            double similarity = jaccardSimilarity(articleTokens, categoryTokens);
+
+            // Update the best category if this one has a higher similarity
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+                bestCategory = category;
+            }
+        }
+
+        return bestCategory;
+    }
+
+    private Set<String> tokenize(String text) {
+        // Tokenize the text into a set of unique words, ignoring case and punctuation
+        return Arrays.stream(text.toLowerCase().split("\\W+"))
+                .filter(token -> !token.isBlank())
+                .collect(Collectors.toSet());
+    }
+
+    private double jaccardSimilarity(Set<String> set1, Set<String> set2) {
+        // Calculate intersection and union of the two sets
+        Set<String> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+
+        Set<String> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        // Return Jaccard Similarity: intersection size / union size
+        return (double) intersection.size() / union.size();
+    }
+
+    public static void main(String[] args) {
+        // Create an instance of the categorizer and categorize articles
+        JaccardArticleCategorizer categorizer = new JaccardArticleCategorizer();
+        categorizer.categorizeArticlesFromMongo();
+    }
+}

@@ -1,0 +1,112 @@
+package com.example.newsrecommendationsystem;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * An NLP-based article categorizer using Cosine Similarity with data directly loaded from MongoDB.
+ */
+public class MongoArticleCategorizer {
+
+    private final Map<String, String> categoryMap;
+
+    /**
+     * Constructor initializes categoryMap by loading categories directly from MongoDB.
+     */
+    public MongoArticleCategorizer() {
+        this.categoryMap = new HashMap<>();
+        loadCategoriesFromMongoDB();
+    }
+
+    /**
+     * Loads categories and associated keywords from the MongoDB database.
+     */
+    private void loadCategoriesFromMongoDB() {
+        try (MongoClient mongoClient = new MongoClient("localhost", 27017)) { // Adjust host and port if needed
+            MongoDatabase database = mongoClient.getDatabase("yourDatabase"); // Replace with your database name
+            MongoCollection<Document> categoryCollection = database.getCollection("categories"); // Replace with your collection name
+
+            // Fetch all category documents and populate the category map
+            for (Document doc : categoryCollection.find()) {
+                String category = doc.getString("category_name");
+                String keywords = doc.getString("keywords");
+                categoryMap.put(category, keywords);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle exception properly in a production environment
+        }
+    }
+
+    /**
+     * Categorizes an article based on its content using Cosine Similarity.
+     * @param articleContent the content of the article to categorize
+     * @return the best matching category or "Uncategorized" if no match is found
+     */
+    public String categorizeArticle(String articleContent) {
+        CosineSimilarity cosineSimilarity = new CosineSimilarity();
+        Map<CharSequence, Integer> articleVector = tokenize(articleContent);
+
+        String bestCategory = "Uncategorized";
+        double maxSimilarity = 0.0;
+
+        for (Map.Entry<String, String> entry : categoryMap.entrySet()) {
+            String category = entry.getKey();
+            Map<CharSequence, Integer> categoryVector = tokenize(entry.getValue());
+
+            double similarity = cosineSimilarity.cosineSimilarity(categoryVector, articleVector);
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+                bestCategory = category;
+            }
+        }
+
+        return bestCategory;
+    }
+
+    /**
+     * Processes articles from MongoDB, categorizes them, and prints the results.
+     */
+    public void processArticlesFromMongoDB() {
+        try (MongoClient mongoClient = new MongoClient("localhost", 27017)) {
+            MongoDatabase database = mongoClient.getDatabase("yourDatabase"); // Replace with your database name
+            MongoCollection<Document> articleCollection = database.getCollection("articles"); // Replace with your collection name
+
+            // Fetch all articles and categorize them
+            for (Document doc : articleCollection.find()) {
+                String title = doc.getString("title");
+                String content = doc.getString("content");
+                String category = categorizeArticle(content);
+
+                System.out.println("Title: " + title);
+                System.out.println("Category: " + category);
+                System.out.println("------------------------------------");
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle exception properly
+        }
+    }
+
+    /**
+     * Tokenizes a given text into a frequency map of words.
+     * @param text the input text to tokenize
+     * @return a map with tokens as keys and their frequencies as values
+     */
+    private Map<CharSequence, Integer> tokenize(String text) {
+        String[] tokens = text.toLowerCase().split("\\W+");
+        return Arrays.stream(tokens)
+                .collect(Collectors.toMap(token -> token, token -> 1, Integer::sum));
+    }
+
+    public static void main(String[] args) {
+        MongoArticleCategorizer categorizer = new MongoArticleCategorizer();
+        categorizer.processArticlesFromMongoDB(); // Fetch and categorize articles from MongoDB
+    }
+}
+

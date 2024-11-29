@@ -1,0 +1,72 @@
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin generated a report.
+Admin viewed the list of users.
+Admin generated a report.
+Admin viewed the list of users.
+Admin generated a report.
+Admin logged in.
+Admin viewed the list of users.
+Admin added new article with title: 'Breaking News!'
+Admin removed user with ID: 54321.
+Admin generated activity report.
+Admin added new user with email: newuser@example.com.
+Admin updated user with ID: 54321 information.
+Admin viewed user with ID: 54321 details.
+Admin approved article with ID: 12345.
+Admin removed category: 'Tech News'.
+User logged in with email: user@example.com.
+User rated article with ID: 12345 with rating: 4.
+User viewed article with ID: 12345.
+User skipped article with ID: 12345.
+User logged out of the system.
+User viewed article with ID: 67890.
+User rated article with ID: 67890 with rating: 5.
+User logged in with email: anotheruser@example.com.
+User viewed article with ID: 54321.
+User skipped article with ID: 54321.
+Admin viewed the list of users.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with ID: 67487e01dcad1b7ccb162a24
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin accessed the Add Article screen.
+Admin viewed the list of users.
+Admin generated a report.
+Admin logged in.
+Admin viewed the list of users.
+Admin added new article with title: 'Breaking News!'
+Admin removed user with ID: 54321.
+Admin generated activity report.
+Admin added new user with email: newuser@example.com.
+Admin updated user with ID: 54321 information.
+Admin viewed user with ID: 54321 details.
+Admin approved article with ID: 12345.
+Admin removed category: 'Tech News'.
+User logged in with email: user@example.com.
+User rated article with ID: 12345 with rating: 4.
+User viewed article with ID: 12345.
+User skipped article with ID: 12345.
+User logged out of the system.
+User viewed article with ID: 67890.
+User rated article with ID: 67890 with rating: 5.
+User logged in with email: anotheruser@example.com.
+User viewed article with ID: 54321.
+User skipped article with ID: 54321.

@@ -1,0 +1,20 @@
+package com.example.newsrecommendationsystem;
+
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
+
+public class Databse {
+    public static void main(String[] args) {
+        // Replace the URI with your MongoDB connection string
+        String uri = "mongodb://localhost:27017";
+
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            // Connect to the database
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+            System.out.println("Connected to database: " + database.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

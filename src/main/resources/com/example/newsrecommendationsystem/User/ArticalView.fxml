@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="434.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.Controllers.User.ArticalViewController">
+   <TextArea fx:id="articals" layoutX="14.0" layoutY="14.0" prefHeight="336.0" prefWidth="578.0" wrapText="true" />
+   <Button fx:id="back2UserMenu" layoutX="14.0" layoutY="396.0" onAction="#onBackToUserMenuClick" text="Back to User Menu" />
+   <Button fx:id="next" layoutX="263.0" layoutY="369.0" onAction="#onNextClick" prefHeight="26.0" prefWidth="61.0" text="Next" />
+   <Button fx:id="previous" layoutX="188.0" layoutY="370.0" onAction="#onPreviousClick" text="Previous" />
+   <Button fx:id="rate" layoutX="385.0" layoutY="369.0" onAction="#onRateClick" prefHeight="26.0" prefWidth="73.0" text="Rate" />
+</AnchorPane>

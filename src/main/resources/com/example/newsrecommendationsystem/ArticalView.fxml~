@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.newsrecommendationsystem.ArticalViewController">
+   <children>
+      <TextArea fx:id="articals" layoutX="50.0" layoutY="50.0" prefHeight="400.0" prefWidth="600.0" wrapText="true" />
+      <Button fx:id="back2UserMenu" text="Back to User Menu" layoutX="50.0" layoutY="470.0" onAction="#onBackToUserMenuClick" />
+      <Button fx:id="next" text="Next" layoutX="150.0" layoutY="470.0" onAction="#onNextClick" />
+      <Button fx:id="previous" text="Previous" layoutX="250.0" layoutY="470.0" onAction="#onPreviousClick" />
+      <Button fx:id="like" text="Like" layoutX="350.0" layoutY="470.0" onAction="#onLikeClick" />
+      <Button fx:id="dislike" text="Dislike" layoutX="450.0" layoutY="470.0" onAction="#onDislikeClick" />
+      <Button fx:id="rate" text="Rate" layoutX="550.0" layoutY="470.0" onAction="#onRateClick" />
+   </children>
+</AnchorPane>

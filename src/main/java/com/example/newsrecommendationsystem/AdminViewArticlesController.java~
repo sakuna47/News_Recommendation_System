@@ -1,0 +1,130 @@
+package com.example.newsrecommendationsystem;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import org.bson.Document;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.result.DeleteResult;
+
+import java.io.IOException;
+import java.util.List;
+
+public class AdminViewArticlesController {
+
+    @FXML
+    private TextArea articles;
+
+    @FXML
+    private Button back;
+
+    @FXML
+    private Button removeArticles;
+
+    // Method to handle the back button click
+    @FXML
+    private void handleBackClick() throws IOException {
+        // Load the AdminView.fxml
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminView.fxml"));
+        AnchorPane adminView = loader.load();  // Load the view
+
+        // Get the current stage (the window where the current scene is)
+        Stage stage = (Stage) back.getScene().getWindow();
+
+        // Set the new scene with the loaded AdminView.fxml
+        stage.setScene(new Scene(adminView));
+    }
+
+    // Method to load articles from MongoDB into the TextArea
+    @FXML
+    public void initialize() {
+        // Connect to the MongoDB database
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+            MongoCollection<Document> collection = database.getCollection("Articles");
+
+            // Fetch all articles from the collection
+            List<Document> articlesList = collection.find().into(new java.util.ArrayList<>());
+
+            // Build a string to display the articles
+            StringBuilder articlesContent = new StringBuilder();
+            for (Document article : articlesList) {
+                String title = article.getString("title");
+                String content = article.getString("content");
+
+                // Append the article content in a readable format
+                articlesContent.append("Title: ").append(title).append("\n")
+                        .append("Content: ").append(content).append("\n\n")
+                        .append("----------------------------------------------------------\n\n");
+            }
+
+            // Set the text in the TextArea
+            articles.setText(articlesContent.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            articles.setText("Error loading articles from database.");
+        }
+    }
+
+    // Method to handle the "Remove Article" button click
+    @FXML
+    private void handleRemoveArticleClick() {
+        // Get the selected content from the TextArea
+        String selectedText = articles.getSelectedText(); // Get the highlighted text
+
+        if (selectedText.isEmpty()) {
+            // If no text is selected, display an error message
+            articles.setText("Please select an article (title or content) to remove.");
+            return;
+        }
+
+        // Try to parse the selected article's title and content
+        String[] lines = selectedText.split("\n");
+        String title = null;
+        String content = null;
+
+        for (String line : lines) {
+            if (line.startsWith("Title:")) {
+                title = line.substring(7).trim();  // Get the title
+            } else if (line.startsWith("Content:")) {
+                content = line.substring(9).trim();  // Get the content
+            }
+        }
+
+        if (title == null || content == null) {
+            // If title or content couldn't be extracted, display a message
+            articles.setText("Could not extract article information. Please try again.");
+            return;
+        }
+
+        // Connect to MongoDB and remove the selected article based on title
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+            MongoCollection<Document> collection = database.getCollection("Articles");
+
+            // Create a filter to find the article by title (or content, if needed)
+            Document filter = new Document("title", title); // You can also use content if necessary
+
+            // Remove the article from the database
+            DeleteResult result = collection.deleteOne(filter);
+
+            if (result.getDeletedCount() > 0) {
+                // Article deleted successfully
+                articles.setText("Article '" + title + "' has been deleted successfully.");
+                initialize();  // Reload the articles to reflect the changes
+            } else {
+                // No matching article found
+                articles.setText("No article found with the title: " + title);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            articles.setText("Error removing article from database.");
+        }
+    }
+}

@@ -1,0 +1,50 @@
+package com.example.newsrecommendationsystem;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class AddArticle {
+
+    @FXML
+    private Button add;
+
+    @FXML
+    private Button back; // Reference to the back button
+
+    @FXML
+    private TextField category;
+
+    @FXML
+    private TextArea content;
+
+    @FXML
+    private TextField source;
+
+    @FXML
+    private TextField title;
+
+    // Handle the Back button click to load the AdminView.fxml
+    @FXML
+    public void handleBackButtonClick() {
+        try {
+            // Load the AdminView.fxml file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/AdminView.fxml"));
+            Stage stage = (Stage) back.getScene().getWindow(); // Use the back button for the current stage
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene); // Set the Admin View scene
+            stage.show(); // Display the stage
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while navigating to the Admin View.");
+            alert.showAndWait();
+        }
+    }
+}
