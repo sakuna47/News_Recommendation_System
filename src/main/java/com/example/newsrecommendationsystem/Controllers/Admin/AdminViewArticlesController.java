@@ -11,6 +11,9 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoClients;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -87,23 +90,42 @@ public class AdminViewArticlesController {
             MongoDatabase database = mongoClient.getDatabase("CwOOD");
             MongoCollection<Document> collection = database.getCollection("Articles");
 
-            //  remove an article based on the selected text (either title or content)
-            //  use the title to identify the article to delete
+            // Remove an article based on the selected text (either title or content)
+            // Use the title to identify the article to delete
             Document query = new Document("title", selectedText);
 
             // Find and delete the article that matches the title (or content)
             Document deletedArticle = collection.findOneAndDelete(query);
 
             if (deletedArticle != null) {
-
                 articles.appendText("\n\nArticle with title \"" + selectedText + "\" has been deleted.");
-            } else {
 
+                // Show an alert indicating successful deletion
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Article Deleted");
+                alert.setHeaderText(null);
+                alert.setContentText("The article with the title \"" + selectedText + "\" has been successfully deleted.");
+                alert.showAndWait();
+            } else {
                 articles.appendText("\n\nNo article found with the selected title.");
+
+                // Show an alert indicating no article was found
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("No Article Found");
+                alert.setHeaderText(null);
+                alert.setContentText("No article was found with the title \"" + selectedText + "\".");
+                alert.showAndWait();
             }
         } catch (Exception e) {
             e.printStackTrace();
             articles.appendText("\n\nError removing article from database.");
+
+            // Show an alert indicating an error occurred
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while removing the article.");
+            alert.showAndWait();
         }
     }
 }
