@@ -24,6 +24,7 @@ public class ArticleRecommender {
         executorService = Executors.newFixedThreadPool(4); // Allow up to 4 concurrent threads
     }
 
+    // Recommend articles for a list of users
     public void recommendArticlesForUsers(List<String> usernames) {
         for (String username : usernames) {
             executorService.submit(() -> {
@@ -41,13 +42,16 @@ public class ArticleRecommender {
         }
     }
 
+    // Recommend articles for a single user
     public List<Document> recommendArticles(String username) {
         MongoCollection<Document> interactionsCollection = database.getCollection(INTERACTIONS_COLLECTION);
         MongoCollection<Document> articlesCollection = database.getCollection(ARTICLES_COLLECTION);
 
+        // Fetch user interactions from the database
         List<Document> userInteractions = interactionsCollection.find(new Document("username", username)).into(new ArrayList<>());
         Map<String, Double> categoryScores = calculateCategoryScores(userInteractions);
 
+        // Categorize preferences based on scores
         List<String> highPreferenceCategories = categoryScores.entrySet().stream()
                 .filter(entry -> entry.getValue() > 7)
                 .map(Map.Entry::getKey)
@@ -58,13 +62,21 @@ public class ArticleRecommender {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
+        List<String> lowPreferenceCategories = categoryScores.entrySet().stream()
+                .filter(entry -> entry.getValue() < 4)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        // Fetch articles based on user preferences
         List<Document> recommendedArticles = new ArrayList<>();
         recommendedArticles.addAll(fetchArticlesByCategory(articlesCollection, highPreferenceCategories, 10));
         recommendedArticles.addAll(fetchArticlesByCategory(articlesCollection, mediumPreferenceCategories, 5));
+        recommendedArticles.addAll(fetchArticlesByCategory(articlesCollection, lowPreferenceCategories, 2));  // Fetch up to 2 articles for low-preference categories
 
         return recommendedArticles;
     }
 
+    // Calculate average rating for each category based on user interactions
     private Map<String, Double> calculateCategoryScores(List<Document> interactions) {
         Map<String, List<Integer>> ratingsByCategory = new HashMap<>();
         for (Document interaction : interactions) {
@@ -73,6 +85,7 @@ public class ArticleRecommender {
             ratingsByCategory.computeIfAbsent(category, k -> new ArrayList<>()).add(rating);
         }
 
+        // Calculate the average rating for each category
         Map<String, Double> categoryScores = new HashMap<>();
         for (Map.Entry<String, List<Integer>> entry : ratingsByCategory.entrySet()) {
             double average = entry.getValue().stream().mapToInt(Integer::intValue).average().orElse(0.0);
@@ -82,6 +95,7 @@ public class ArticleRecommender {
         return categoryScores;
     }
 
+    // Fetch articles for specific categories from the database
     private List<Document> fetchArticlesByCategory(MongoCollection<Document> articlesCollection, List<String> categories, int limitPerCategory) {
         List<Document> articles = new ArrayList<>();
         for (String category : categories) {
@@ -93,6 +107,7 @@ public class ArticleRecommender {
         return articles;
     }
 
+    // Clean up resources
     public void close() {
         executorService.shutdown();
         mongoClient.close();
