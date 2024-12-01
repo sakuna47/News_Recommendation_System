@@ -3,6 +3,7 @@ package com.example.newsrecommendationsystem.Service;
 import com.mongodb.client.*;
 import org.bson.Document;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class ArticleRecommender {
@@ -13,13 +14,15 @@ public class ArticleRecommender {
 
     private MongoClient mongoClient;
     private MongoDatabase database;
+    private ExecutorService executorService;
 
     public ArticleRecommender() {
         mongoClient = MongoClients.create("mongodb://localhost:27017"); // Update the connection string if necessary
         database = mongoClient.getDatabase(DATABASE_NAME);
+        executorService = Executors.newFixedThreadPool(10); // Using a thread pool with 10 threads
     }
 
-    public List<Document> recommendArticles(String username) {
+    public List<Document> recommendArticles(String username) throws InterruptedException, ExecutionException {
         MongoCollection<Document> interactionsCollection = database.getCollection(INTERACTIONS_COLLECTION);
         MongoCollection<Document> articlesCollection = database.getCollection(ARTICLES_COLLECTION);
 
@@ -30,31 +33,31 @@ public class ArticleRecommender {
         Map<String, Double> categoryScores = calculateCategoryScores(userInteractions);
 
         // Categorize preferences
-        List<String> highPreferenceCategories = categoryScores.entrySet().stream()
-                .filter(entry -> entry.getValue() > 7)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<String> highPreferenceCategories = new ArrayList<>();
+        List<String> mediumPreferenceCategories = new ArrayList<>();
+        List<String> lowPreferenceCategories = new ArrayList<>();
 
-        List<String> mediumPreferenceCategories = categoryScores.entrySet().stream()
-                .filter(entry -> entry.getValue() >= 4 && entry.getValue() <= 7)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        for (Map.Entry<String, Double> entry : categoryScores.entrySet()) {
+            if (entry.getValue() > 7) {
+                highPreferenceCategories.add(entry.getKey());
+            } else if (entry.getValue() >= 4 && entry.getValue() <= 7) {
+                mediumPreferenceCategories.add(entry.getKey());
+            } else {
+                lowPreferenceCategories.add(entry.getKey());
+            }
+        }
 
-        List<String> lowPreferenceCategories = categoryScores.entrySet().stream()
-                .filter(entry -> entry.getValue() < 4)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        // Use ExecutorService to fetch articles asynchronously
+        List<Future<List<Document>>> futures = new ArrayList<>();
+        futures.add(executorService.submit(() -> fetchArticlesByCategory(articlesCollection, highPreferenceCategories, 10)));
+        futures.add(executorService.submit(() -> fetchArticlesByCategory(articlesCollection, mediumPreferenceCategories, 5)));
 
-        // Fetch articles based on preferences
+        // Wait for all tasks to complete and combine the results
         List<Document> recommendedArticles = new ArrayList<>();
+        for (Future<List<Document>> future : futures) {
+            recommendedArticles.addAll(future.get());
+        }
 
-        // Add more articles from high preference categories
-        recommendedArticles.addAll(fetchArticlesByCategory(articlesCollection, highPreferenceCategories, 10));
-
-        // Add fewer articles from medium preference categories
-        recommendedArticles.addAll(fetchArticlesByCategory(articlesCollection, mediumPreferenceCategories, 5));
-
-        // Avoid articles from low preference categories
         return recommendedArticles;
     }
 
@@ -68,7 +71,6 @@ public class ArticleRecommender {
             ratingsByCategory.computeIfAbsent(category, k -> new ArrayList<>()).add(rating);
         }
 
-        // Compute average scores for each category
         Map<String, Double> categoryScores = new HashMap<>();
         for (Map.Entry<String, List<Integer>> entry : ratingsByCategory.entrySet()) {
             double average = entry.getValue().stream().mapToInt(Integer::intValue).average().orElse(0.0);
@@ -91,9 +93,10 @@ public class ArticleRecommender {
 
     public void close() {
         mongoClient.close();
+        executorService.shutdown(); // Shutdown the executor service
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         // Initialize the session manager and set a test user (for demonstration)
         SessionManager sessionManager = SessionManager.getInstance();
         sessionManager.setUsername("sakuna@gmail.com");  // This simulates a login

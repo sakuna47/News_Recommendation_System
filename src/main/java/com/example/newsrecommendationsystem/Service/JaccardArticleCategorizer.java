@@ -6,10 +6,12 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class JaccardArticleCategorizer {
 
     private final Map<String, String> categoryExamples;
+    private ExecutorService executorService;
 
     public JaccardArticleCategorizer() {
         categoryExamples = new HashMap<>();
@@ -21,6 +23,8 @@ public class JaccardArticleCategorizer {
         categoryExamples.put("Weather", "rain, heatwave, cyclone, flood, forecast");
         categoryExamples.put("Entertainment", "movies, music, celebrities, festival, series");
         categoryExamples.put("World News", "global, international, war, diplomacy, conflict");
+
+        executorService = Executors.newFixedThreadPool(10); // Thread pool for concurrency
     }
 
     // Method to fetch articles based on category
@@ -64,5 +68,22 @@ public class JaccardArticleCategorizer {
         }
 
         return bestCategory;
+    }
+
+    public List<String> categorizeArticles(List<String> contents) throws InterruptedException, ExecutionException {
+        List<Future<String>> futures = new ArrayList<>();
+        for (String content : contents) {
+            futures.add(executorService.submit(() -> categorize(content)));
+        }
+
+        List<String> categories = new ArrayList<>();
+        for (Future<String> future : futures) {
+            categories.add(future.get()); // Get the result of categorization
+        }
+        return categories;
+    }
+
+    public void shutdown() {
+        executorService.shutdown();
     }
 }
