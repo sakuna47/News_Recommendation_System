@@ -159,7 +159,7 @@ public class UserViewController {
             MongoCollection<Document> usersCollection = database.getCollection("Users");
 
             // Delete the user document
-            long deletedCount = usersCollection.deleteOne(new Document("name", SessionManager.getInstance().getUsername())).getDeletedCount();
+            long deletedCount = usersCollection.deleteOne(new Document("email", SessionManager.getInstance().getUsername())).getDeletedCount();
 
             if (deletedCount > 0) {
                 System.out.println("User deleted successfully.");

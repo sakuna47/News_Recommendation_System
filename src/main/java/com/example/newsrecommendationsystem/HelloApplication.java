@@ -18,31 +18,36 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-        // Example of using concurrency for a background task
+        // Start background task for multiple users
+        String username = "user1";  // Simulating user login
+        startBackgroundTask(username);
+    }
+
+    private void startBackgroundTask(String username) {
         Task<Void> backgroundTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                // Simulate a time-consuming operation (e.g., recommending articles)
-                Thread.sleep(2000); // Simulating a 2-second operation
+                // Simulate a time-consuming operation
+                System.out.println("Fetching recommendations for user: " + username);
+                Thread.sleep(2000); // Simulate delay for article fetching
                 return null;
             }
 
             @Override
             protected void succeeded() {
-                // Task completed successfully, no alert, just a log (optional)
-                System.out.println("Background task completed successfully!");
+                // Task completed successfully, log to console
+                System.out.println("Background task completed for " + username + "!");
             }
 
             @Override
             protected void failed() {
-                // Task failed, no alert, just a log (optional)
-                System.out.println("Background task failed!");
+                // Task failed, log to console
+                System.out.println("Background task failed for " + username + "!");
             }
         };
 
-        // Run the background task asynchronously on a new thread
         Thread taskThread = new Thread(backgroundTask);
-        taskThread.setDaemon(true); // Ensures the thread is terminated when the application exits
+        taskThread.setDaemon(true); // Ensures the thread terminates when the app closes
         taskThread.start();
     }
 
