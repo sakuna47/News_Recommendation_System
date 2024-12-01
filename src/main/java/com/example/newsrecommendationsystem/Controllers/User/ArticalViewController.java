@@ -74,13 +74,13 @@ public class ArticalViewController {
 
     @FXML
     void onLikeClick(ActionEvent event) {
-        saveInteraction("like", null); // No rating for like interaction
+        saveInteraction("like", null);
         articals.setText(articals.getText() + "\n\nYou liked this article.");
     }
 
     @FXML
     void onDislikeClick(ActionEvent event) {
-        saveInteraction("dislike", null); // No rating for dislike interaction
+        saveInteraction("dislike", null);
         articals.setText(articals.getText() + "\n\nYou disliked this article.");
     }
 
@@ -96,13 +96,19 @@ public class ArticalViewController {
             try {
                 int rating = Integer.parseInt(result.get());
                 if (rating >= 1 && rating <= 10) {
-                    saveInteraction("rated", rating); // Save rating interaction
+                    saveInteraction("rated", rating);
                     articals.setText(articals.getText() + "\n\nYou rated this article: " + rating + "/10");
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Rating Submitted");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Thank you! You rated this article: " + rating + "/10");
+                    alert.showAndWait();
                 } else {
-                    showInvalidRatingAlert(); // Show alert for invalid rating
+                    showInvalidRatingAlert();
                 }
             } catch (NumberFormatException e) {
-                showInvalidRatingAlert(); // Show alert for invalid input format
+                showInvalidRatingAlert();
             }
         }
     }
@@ -134,7 +140,6 @@ public class ArticalViewController {
         }
     }
 
-    // Save interaction (like, dislike, or rating)
     private void saveInteraction(String interactionType, Integer rating) {
         if (articles != null && !articles.isEmpty() && username != null) {
             try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
@@ -143,74 +148,32 @@ public class ArticalViewController {
 
                 Document currentArticle = articles.get(currentIndex);
 
-                // Check if the user has already interacted with this article
                 Document existingInteraction = interactionsCollection.find(new Document("articleId", currentArticle.get("_id"))
                         .append("username", username)).first();
 
                 if (existingInteraction != null) {
-                    // Update the existing interaction (with rating if available)
                     interactionsCollection.updateOne(
                             new Document("_id", existingInteraction.get("_id")),
                             new Document("$set", new Document("interactionType", interactionType)
-                                    .append("rating", rating) // Add the rating field
+                                    .append("rating", rating)
                                     .append("timestamp", System.currentTimeMillis())));
                 } else {
-                    // Insert a new interaction with rating field if rating is not null
                     Document interaction = new Document("articleId", currentArticle.get("_id"))
                             .append("category", currentArticle.getString("category"))
                             .append("interactionType", interactionType)
                             .append("username", username)
-                            .append("rating", rating) // Include rating in the interaction
+                            .append("rating", rating)
                             .append("timestamp", System.currentTimeMillis());
 
                     interactionsCollection.insertOne(interaction);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    // Save rating in Ratings collection
-    private void saveRating(int rating) {
-        if (articles != null && !articles.isEmpty() && username != null) {
-            try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
-                MongoDatabase database = mongoClient.getDatabase("CwOOD");
-                MongoCollection<Document> ratingsCollection = database.getCollection("Ratings");
-
-                Document currentArticle = articles.get(currentIndex);
-
-                // Check if the user has already rated the article
-                Document existingRating = ratingsCollection.find(new Document("articleId", currentArticle.get("_id"))
-                        .append("username", username)).first();
-
-                if (existingRating != null) {
-                    // Update the existing rating
-                    ratingsCollection.updateOne(
-                            new Document("_id", existingRating.get("_id")),
-                            new Document("$set", new Document("rating", rating)
-                                    .append("timestamp", System.currentTimeMillis())));
-                } else {
-                    // Insert a new rating
-                    Document ratingDoc = new Document("articleId", currentArticle.get("_id"))
-                            .append("category", currentArticle.getString("category"))
-                            .append("rating", rating)
-                            .append("username", username)
-                            .append("timestamp", System.currentTimeMillis());
-
-                    ratingsCollection.insertOne(ratingDoc);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // Show an alert for invalid rating
     private void showInvalidRatingAlert() {
-        // Create an alert to show the invalid rating message
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Invalid Rating");
         alert.setHeaderText("Invalid Rating Input");

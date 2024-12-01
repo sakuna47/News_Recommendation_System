@@ -118,3 +118,5 @@ Admin viewed the list of users.
 Admin deleted user with email: sakuna1@gmail.com and 5 associated interactions.
 Admin viewed the list of users.
 Admin generated a report.
+Admin viewed the list of users.
+Admin viewed the list of users.
