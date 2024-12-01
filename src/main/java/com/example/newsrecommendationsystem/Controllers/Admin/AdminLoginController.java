@@ -54,7 +54,7 @@ public class AdminLoginController {
     // Load the Admin View FXML file after successful login
     private void loadAdminView() {
         try {
-            // Assuming the Admin View FXML is "AdminView.fxml"
+            // Admin View FXML is "AdminView.fxml"
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/Admin/AdminView.fxml"));
             Stage stage = (Stage) usernameField.getScene().getWindow(); // Get the current window
             Scene scene = new Scene(loader.load());

@@ -20,21 +20,21 @@ import java.io.IOException;
 public class UserLoginController {
 
     @FXML
-    private TextField L_usernameField; // TextField for username input
+    private TextField L_usernameField;
 
     @FXML
-    private TextField L_emailField; // TextField for email input (added)
+    private TextField L_emailField;
 
     @FXML
     private PasswordField L_password;
 
-    public String curentUser; // PasswordField for password input
+    public String curentUser;
 
     // Handle login button click
     @FXML
     public void handleLoginClick(ActionEvent event) {
-        String email = L_emailField.getText().trim(); // Get email input
-        String password = L_password.getText().trim(); // Get password input
+        String email = L_emailField.getText().trim();
+        String password = L_password.getText().trim();
 
         // Check if email, username, and password fields are empty
         if (email.isEmpty() || password.isEmpty()) {

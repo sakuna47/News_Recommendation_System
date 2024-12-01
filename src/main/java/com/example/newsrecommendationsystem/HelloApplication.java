@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class HelloApplication extends Application {
 
@@ -18,37 +20,36 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-        // Start background task for multiple users
-        String username = "user1";  // Simulating user login
-        startBackgroundTask(username);
+        // Simulate multiple users logging in
+        List<String> usernames = Arrays.asList("user1", "user2", "user3");
+        startBackgroundTasks(usernames);
     }
 
-    private void startBackgroundTask(String username) {
-        Task<Void> backgroundTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                // Simulate a time-consuming operation
-                System.out.println("Fetching recommendations for user: " + username);
-                Thread.sleep(2000); // Simulate delay for article fetching
-                return null;
-            }
+    private void startBackgroundTasks(List<String> usernames) {
+        for (String username : usernames) {
+            Task<Void> backgroundTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    System.out.println("Fetching recommendations for user: " + username);
+                    Thread.sleep(2000); // Simulate delay
+                    return null;
+                }
 
-            @Override
-            protected void succeeded() {
-                // Task completed successfully, log to console
-                System.out.println("Background task completed for " + username + "!");
-            }
+                @Override
+                protected void succeeded() {
+                    System.out.println("Background task completed for " + username + "!");
+                }
 
-            @Override
-            protected void failed() {
-                // Task failed, log to console
-                System.out.println("Background task failed for " + username + "!");
-            }
-        };
+                @Override
+                protected void failed() {
+                    System.out.println("Background task failed for " + username + "!");
+                }
+            };
 
-        Thread taskThread = new Thread(backgroundTask);
-        taskThread.setDaemon(true); // Ensures the thread terminates when the app closes
-        taskThread.start();
+            Thread taskThread = new Thread(backgroundTask);
+            taskThread.setDaemon(true);
+            taskThread.start();
+        }
     }
 
     public static void main(String[] args) {

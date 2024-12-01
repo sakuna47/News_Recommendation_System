@@ -54,7 +54,7 @@ public class AddArticle {
 
         try {
             // Connect to MongoDB
-            MongoDatabase database = MongoClients.create("mongodb://localhost:27017").getDatabase("CwOOD"); // Connect to your database
+            MongoDatabase database = MongoClients.create("mongodb://localhost:27017").getDatabase("CwOOD");
             MongoCollection<Document> articlesCollection = database.getCollection("Articles");
 
             // Create a new document with the article data

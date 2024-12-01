@@ -21,15 +21,15 @@ public class AdminViewController {
     @FXML
     private Button generateReport;
     @FXML
-    private Button back2AdminLogin; // The Back button defined in the FXML file
+    private Button back2AdminLogin;
     @FXML
     private Button adminViewArticles;
     @FXML
-    private Button removeUsers; // Button to remove a selected user
+    private Button removeUsers;
     @FXML
-    private TextArea users; // TextArea to display user information
+    private TextArea users;
     @FXML
-    private Button addArticles; // Button to add articles
+    private Button addArticles;
 
     // MongoDB connection details
     private static final String DATABASE_NAME = "CwOOD";

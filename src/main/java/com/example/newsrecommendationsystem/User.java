@@ -16,7 +16,7 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    // Getter and setter methods for name
+
     public String getName() {
         return name;
     }
@@ -25,7 +25,7 @@ public class User {
         this.name = name;
     }
 
-    // Getter and setter methods for email
+
     public String getEmail() {
         return email;
     }
@@ -34,7 +34,7 @@ public class User {
         this.email = email;
     }
 
-    // Getter and setter methods for password
+
     public String getPassword() {
         return password;
     }
@@ -43,7 +43,7 @@ public class User {
         this.password = password;
     }
 
-    // Getter and setter methods for confirmPassword
+
     public String getConfirmPassword() {
         return confirmPassword;
     }

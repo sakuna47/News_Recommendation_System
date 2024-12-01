@@ -134,7 +134,7 @@ public class SignUpController {
     /**
      * Validates the email format using a regular expression.
      * @param email The email to validate.
-     * @return true if the email format is valid, false otherwise.
+
      */
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@gmail\\.com$";
@@ -145,23 +145,18 @@ public class SignUpController {
 
     /**
      * Simulates sending a verification email to the user.
-     * In a real scenario, you would integrate an email service like SMTP or a third-party service.
+
      * @param email The user's email.
      */
     private void sendVerificationEmail(String email) {
         // Simulate the email sending process
         System.out.println("Verification email sent to " + email + ". Please check your inbox.");
 
-        // You can implement actual email service here
-        // For example, use JavaMail API or a third-party service like SendGrid, Mailgun, etc.
     }
 
     /**
      * Utility method to show an alert dialog.
-     *
-     * @param title  The title of the alert.
-     * @param message The content of the alert.
-     * @param alertType The type of the alert (e.g., ERROR, INFORMATION).
+
      */
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);

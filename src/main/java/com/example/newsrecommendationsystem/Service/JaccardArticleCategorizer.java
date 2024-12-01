@@ -23,14 +23,12 @@ public class JaccardArticleCategorizer {
         categoryExamples.put("World News", "global, international, war, diplomacy, conflict");
     }
 
-    // Method to fetch articles based on category
     public List<Document> getArticlesByCategory(String category) {
         List<Document> categorizedArticles = new ArrayList<>();
         try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
             MongoDatabase database = mongoClient.getDatabase("CwOOD");
             MongoCollection<Document> articlesCollection = database.getCollection("Articles");
 
-            // Query articles based on category
             categorizedArticles = articlesCollection.find(new Document("category", category)).into(new ArrayList<>());
         }
         return categorizedArticles;

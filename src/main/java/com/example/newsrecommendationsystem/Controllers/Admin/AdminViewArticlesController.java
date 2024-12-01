@@ -33,7 +33,7 @@ public class AdminViewArticlesController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/Admin/AdminView.fxml"));
         AnchorPane adminView = loader.load();  // Load the view
 
-        // Get the current stage (the window where the current scene is)
+
         Stage stage = (Stage) back.getScene().getWindow();
 
         // Set the new scene with the loaded AdminView.fxml
@@ -87,18 +87,18 @@ public class AdminViewArticlesController {
             MongoDatabase database = mongoClient.getDatabase("CwOOD");
             MongoCollection<Document> collection = database.getCollection("Articles");
 
-            // We can remove an article based on the selected text (either title or content)
-            // We use the title to identify the article to delete
+            //  remove an article based on the selected text (either title or content)
+            //  use the title to identify the article to delete
             Document query = new Document("title", selectedText);
 
             // Find and delete the article that matches the title (or content)
             Document deletedArticle = collection.findOneAndDelete(query);
 
             if (deletedArticle != null) {
-                // Successfully deleted the article, update the TextArea
+
                 articles.appendText("\n\nArticle with title \"" + selectedText + "\" has been deleted.");
             } else {
-                // If no article is found to delete
+
                 articles.appendText("\n\nNo article found with the selected title.");
             }
         } catch (Exception e) {
