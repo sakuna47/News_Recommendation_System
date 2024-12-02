@@ -2,6 +2,7 @@ package com.example.newsrecommendationsystem.Controllers.Admin;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -81,51 +82,70 @@ public class AdminViewArticlesController {
         String selectedText = articles.getSelectedText();
 
         if (selectedText.isEmpty()) {
-            // If no text is selected, inform the user
+            // No article selected
             articles.appendText("\n\nPlease select an article to remove.");
+            Alert noSelectionAlert = new Alert(Alert.AlertType.WARNING);
+            noSelectionAlert.setTitle("No Selection");
+            noSelectionAlert.setHeaderText("No Article Selected");
+            noSelectionAlert.setContentText("Please select an article's title to delete.");
+            noSelectionAlert.showAndWait();
             return;
         }
 
-        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
-            MongoDatabase database = mongoClient.getDatabase("CwOOD");
-            MongoCollection<Document> collection = database.getCollection("Articles");
+        // Display confirmation dialog
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirm Deletion");
+        confirmAlert.setHeaderText("Are you sure you want to delete this article?");
+        confirmAlert.setContentText("Selected article title: " + selectedText);
 
-            // Remove an article based on the selected text (either title or content)
-            // Use the title to identify the article to delete
-            Document query = new Document("title", selectedText);
+        // Wait for the user's response
+        confirmAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // User confirmed deletion
+                try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+                    MongoDatabase database = mongoClient.getDatabase("CwOOD");
+                    MongoCollection<Document> collection = database.getCollection("Articles");
 
-            // Find and delete the article that matches the title (or content)
-            Document deletedArticle = collection.findOneAndDelete(query);
+                    // Create a query to find and delete the article
+                    Document query = new Document("title", selectedText);
+                    Document deletedArticle = collection.findOneAndDelete(query);
 
-            if (deletedArticle != null) {
-                articles.appendText("\n\nArticle with title \"" + selectedText + "\" has been deleted.");
-
-                // Show an alert indicating successful deletion
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Article Deleted");
-                alert.setHeaderText(null);
-                alert.setContentText("The article with the title \"" + selectedText + "\" has been successfully deleted.");
-                alert.showAndWait();
+                    if (deletedArticle != null) {
+                        // Successfully deleted the article
+                        articles.appendText("\n\nArticle with title \"" + selectedText + "\" has been deleted.");
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("Success");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("Article with title \"" + selectedText + "\" has been successfully deleted.");
+                        successAlert.showAndWait();
+                    } else {
+                        // No matching article found
+                        articles.appendText("\n\nNo article found with the selected title \"" + selectedText + "\".");
+                        Alert notFoundAlert = new Alert(Alert.AlertType.INFORMATION);
+                        notFoundAlert.setTitle("Article Not Found");
+                        notFoundAlert.setHeaderText(null);
+                        notFoundAlert.setContentText("No article found with the selected title.");
+                        notFoundAlert.showAndWait();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    articles.appendText("\n\nError occurred while trying to delete the article.");
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Error");
+                    errorAlert.setHeaderText("Database Error");
+                    errorAlert.setContentText("An error occurred while trying to delete the article. Please try again.");
+                    errorAlert.showAndWait();
+                }
             } else {
-                articles.appendText("\n\nNo article found with the selected title.");
-
-                // Show an alert indicating no article was found
-                Alert alert = new Alert(AlertType.WARNING);
-                alert.setTitle("No Article Found");
-                alert.setHeaderText(null);
-                alert.setContentText("No article was found with the title \"" + selectedText + "\".");
-                alert.showAndWait();
+                // User canceled deletion
+                articles.appendText("\n\nDeletion canceled for article titled \"" + selectedText + "\".");
+                Alert cancelAlert = new Alert(Alert.AlertType.INFORMATION);
+                cancelAlert.setTitle("Deletion Canceled");
+                cancelAlert.setHeaderText(null);
+                cancelAlert.setContentText("Deletion has been canceled. The article remains unchanged.");
+                cancelAlert.showAndWait();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            articles.appendText("\n\nError removing article from database.");
-
-            // Show an alert indicating an error occurred
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("An error occurred while removing the article.");
-            alert.showAndWait();
-        }
+        });
     }
+
 }

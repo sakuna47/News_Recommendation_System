@@ -152,3 +152,7 @@ Admin viewed the list of users.
 Admin navigated back to the Admin Login screen.
 Admin viewed the list of users.
 Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the articles.
