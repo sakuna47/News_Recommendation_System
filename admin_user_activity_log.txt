@@ -161,3 +161,10 @@ Admin viewed the list of users.
 Admin deleted user with email: sakuna4@gmail.com and 0 associated interactions.
 Admin viewed the list of users.
 Admin deleted user with email: sakuna2@gmail.com and 8 associated interactions.
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with email: sakuna3@gmail.com and 0 associated interactions.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.

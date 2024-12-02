@@ -143,18 +143,14 @@ public class AdminViewController {
             return;
         }
 
-        // Confirmation dialog
+        // Prompt for confirmation before deletion
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Confirm Deletion");
-        confirmationAlert.setHeaderText(null);
-        confirmationAlert.setContentText("Are you sure you want to delete this user and their associated interactions?");
-        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-        confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
+        confirmationAlert.setHeaderText("Are you sure you want to delete this user?");
+        confirmationAlert.setContentText("This action cannot be undone.");
 
-        // Show confirmation dialog and handle the response
         confirmationAlert.showAndWait().ifPresent(response -> {
-            if (response == yesButton) {
+            if (response == ButtonType.OK) {
                 try (MongoClient mongoClient = MongoClients.create(CONNECTION_STRING)) {
                     MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                     MongoCollection<Document> usersCollection = database.getCollection(USERS_COLLECTION);
@@ -195,9 +191,17 @@ public class AdminViewController {
                     alert.setContentText("An error occurred while deleting the user.");
                     alert.showAndWait();
                 }
+            } else {
+                // If "No" is selected, show a notification
+                Alert cancelAlert = new Alert(Alert.AlertType.INFORMATION);
+                cancelAlert.setTitle("Action Canceled");
+                cancelAlert.setHeaderText(null);
+                cancelAlert.setContentText("User deletion was canceled.");
+                cancelAlert.showAndWait();
             }
         });
     }
+
 
 
 
