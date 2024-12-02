@@ -14,6 +14,7 @@ import org.bson.types.ObjectId;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AdminViewController {
@@ -129,14 +130,9 @@ public class AdminViewController {
         }
 
         String[] lines = selectedText.split("\n");
-        String email = null;
+        String email = Arrays.stream(lines).filter(line -> line.startsWith("Email: ")).findFirst().map(line -> line.substring(7).trim()).orElse(null);
 
-        for (String line : lines) {
-            if (line.startsWith("Email: ")) {
-                email = line.substring(7).trim(); // Extract email after "Email: "
-                break;
-            }
-        }
+        // Extract email after "Email: "
 
         if (email == null || email.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -147,47 +143,62 @@ public class AdminViewController {
             return;
         }
 
-        try (MongoClient mongoClient = MongoClients.create(CONNECTION_STRING)) {
-            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
-            MongoCollection<Document> usersCollection = database.getCollection(USERS_COLLECTION);
-            MongoCollection<Document> interactionsCollection = database.getCollection(INTERACTIONS_COLLECTION);
+        // Confirmation dialog
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirm Deletion");
+        confirmationAlert.setHeaderText(null);
+        confirmationAlert.setContentText("Are you sure you want to delete this user and their associated interactions?");
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+        confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
 
-            // Delete the user from the Users collection
-            Document userQuery = new Document("email", email);
-            long deletedUserCount = usersCollection.deleteOne(userQuery).getDeletedCount();
+        // Show confirmation dialog and handle the response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == yesButton) {
+                try (MongoClient mongoClient = MongoClients.create(CONNECTION_STRING)) {
+                    MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+                    MongoCollection<Document> usersCollection = database.getCollection(USERS_COLLECTION);
+                    MongoCollection<Document> interactionsCollection = database.getCollection(INTERACTIONS_COLLECTION);
 
-            if (deletedUserCount > 0) {
-                // Delete all interactions associated with the email in ArticleInteractions
-                Document interactionQuery = new Document("username", email);
-                long deletedInteractionsCount = interactionsCollection.deleteMany(interactionQuery).getDeletedCount();
+                    // Delete the user from the Users collection
+                    Document userQuery = new Document("email", email);
+                    long deletedUserCount = usersCollection.deleteOne(userQuery).getDeletedCount();
 
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Success");
-                alert.setHeaderText(null);
-                alert.setContentText("User and their interactions successfully deleted.\n" +
-                        "Deleted interactions: " + deletedInteractionsCount);
-                alert.showAndWait();
+                    if (deletedUserCount > 0) {
+                        // Delete all interactions associated with the email in ArticleInteractions
+                        Document interactionQuery = new Document("username", email);
+                        long deletedInteractionsCount = interactionsCollection.deleteMany(interactionQuery).getDeletedCount();
 
-                // Reload the users list in the TextArea
-                loadUsersFromDatabase();
-                logAction("Admin deleted user with email: " + email +
-                        " and " + deletedInteractionsCount + " associated interactions.");
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Warning");
-                alert.setHeaderText(null);
-                alert.setContentText("No user found with the specified email.");
-                alert.showAndWait();
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("Success");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("User and their interactions successfully deleted.\n" +
+                                "Deleted interactions: " + deletedInteractionsCount);
+                        successAlert.showAndWait();
+
+                        // Reload the users list in the TextArea
+                        loadUsersFromDatabase();
+                        logAction("Admin deleted user with email: " + email +
+                                " and " + deletedInteractionsCount + " associated interactions.");
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Warning");
+                        alert.setHeaderText(null);
+                        alert.setContentText("No user found with the specified email.");
+                        alert.showAndWait();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("An error occurred while deleting the user.");
+                    alert.showAndWait();
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("An error occurred while deleting the user.");
-            alert.showAndWait();
-        }
+        });
     }
+
 
 
     @FXML
