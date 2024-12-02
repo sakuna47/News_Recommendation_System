@@ -142,3 +142,13 @@ Admin viewed the list of users.
 Admin accessed the Add Article screen.
 Admin viewed the list of users.
 Admin viewed the articles.
+Admin viewed the list of users.
+Admin generated a report.
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin viewed the articles.
+Admin viewed the list of users.
+Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin navigated back to the Admin Login screen.

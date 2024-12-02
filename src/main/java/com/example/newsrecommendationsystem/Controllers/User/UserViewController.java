@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,9 @@ public class UserViewController {
 
     @FXML
     private Button deleteAccount;
+
+    @FXML
+    private Button allArticles;
 
     public UserViewController() {
     }
@@ -115,6 +119,30 @@ public class UserViewController {
             // Show the article view
             Stage stage = (Stage) recommendation.getScene().getWindow();
             stage.setScene(new Scene(articlePage));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void onAllArticlesClick(ActionEvent event) {
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            // Fetch all articles from the MongoDB collection
+            MongoDatabase database = mongoClient.getDatabase("CwOOD");
+            MongoCollection<Document> articlesCollection = database.getCollection("Articles");
+            List<Document> articlesList = articlesCollection.find().into(new ArrayList<>());
+
+            // Load the ArticleView and pass the articles
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/User/ArticalView.fxml"));
+            AnchorPane articleView = loader.load();
+
+            // Set articles in the ArticleViewController
+            ArticalViewController articleViewController = loader.getController();
+            articleViewController.setArticles(articlesList);  // Use the existing setArticles method
+
+            // Switch scene
+            Stage stage = (Stage) allArticles.getScene().getWindow();
+            stage.setScene(new Scene(articleView));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
