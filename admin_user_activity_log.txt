@@ -171,3 +171,7 @@ Admin viewed the list of users.
 Admin viewed the list of users.
 Admin generated a report.
 Admin navigated back to the Admin Login screen.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with email: sakuna1@gmail.com and 0 associated interactions.
+Admin navigated back to the Admin Login screen.

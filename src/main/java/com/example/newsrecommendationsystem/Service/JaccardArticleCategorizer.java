@@ -6,10 +6,12 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class JaccardArticleCategorizer {
 
     private final Map<String, String> categoryExamples;
+    private final ExecutorService executorService;
 
     public JaccardArticleCategorizer() {
         categoryExamples = new HashMap<>();
@@ -21,6 +23,9 @@ public class JaccardArticleCategorizer {
         categoryExamples.put("Weather", "rain, heatwave, cyclone, flood, forecast");
         categoryExamples.put("Entertainment", "movies, music, celebrities, festival, series");
         categoryExamples.put("World News", "global, international, war, diplomacy, conflict");
+
+        // Create a fixed thread pool with 10 threads
+        this.executorService = Executors.newFixedThreadPool(10);
     }
 
     public List<Document> getArticlesByCategory(String category) {
@@ -62,5 +67,27 @@ public class JaccardArticleCategorizer {
         }
 
         return bestCategory;
+    }
+
+    public List<String> categorizeArticles(List<String> articleContents) throws InterruptedException, ExecutionException {
+        List<Future<String>> futures = new ArrayList<>();
+        List<String> categories = new ArrayList<>();
+
+        // Submit categorization tasks for each article
+        for (String articleContent : articleContents) {
+            futures.add(executorService.submit(() -> categorize(articleContent)));
+        }
+
+        // Wait for all tasks to complete and collect results
+        for (Future<String> future : futures) {
+            categories.add(future.get());
+        }
+
+        return categories;
+    }
+
+    // Shutdown the executor service when done
+    public void shutdown() {
+        executorService.shutdown();
     }
 }
