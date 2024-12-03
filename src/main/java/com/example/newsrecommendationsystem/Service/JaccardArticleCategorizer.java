@@ -25,7 +25,7 @@ public class JaccardArticleCategorizer {
 
     public List<Document> getArticlesByCategory(String category) {
         List<Document> categorizedArticles = new ArrayList<>();
-        try (var mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+        try (var mongoClient = MongoClients.create("mongodb://localhost:27017?maxPoolSize=100\"")) {
             MongoDatabase database = mongoClient.getDatabase("CwOOD");
             MongoCollection<Document> articlesCollection = database.getCollection("Articles");
 

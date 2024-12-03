@@ -19,7 +19,7 @@ public class ArticleRecommender {
     private final ExecutorService executorService;
 
     public ArticleRecommender() {
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        mongoClient = MongoClients.create("mongodb://localhost:27017?maxPoolSize=100\"");
         database = mongoClient.getDatabase(DATABASE_NAME);
         executorService = Executors.newFixedThreadPool(4); // Allow up to 4 concurrent threads
     }
