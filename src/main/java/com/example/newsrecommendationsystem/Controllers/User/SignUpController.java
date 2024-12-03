@@ -9,9 +9,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -35,7 +35,7 @@ public class SignUpController {
 
     /**
      * Handles the sign-up button click. This method collects the user's input,
-     * validates it, hashes the password, and saves it to MongoDB.
+     * validates it, hashes the password, saves it to MongoDB, and navigates to the login screen if successful.
      */
     @FXML
     private void handleSignUpClick(ActionEvent event) {
@@ -101,6 +101,9 @@ public class SignUpController {
                             "Verification email sent to: " + email + ". Please check your inbox.",
                     Alert.AlertType.INFORMATION);
 
+            // Load the login screen
+            navigateToLogin(event);
+
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Error while saving user to MongoDB.", Alert.AlertType.ERROR);
@@ -108,10 +111,9 @@ public class SignUpController {
     }
 
     /**
-     * Handles the back button click. This method navigates back to the login screen.
+     * Navigates to the login screen.
      */
-    @FXML
-    private void handleBackClick(ActionEvent event) {
+    private void navigateToLogin(ActionEvent event) {
         try {
             // Load the UserLogin.fxml file
             Parent loginView = FXMLLoader.load(getClass().getResource("/com/example/newsrecommendationsystem/User/UserLogin.fxml"));
@@ -124,7 +126,6 @@ public class SignUpController {
             currentStage.setScene(loginScene);
             currentStage.setTitle("User Login");
             currentStage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "Error loading UserLogin.fxml.", Alert.AlertType.ERROR);
@@ -132,9 +133,17 @@ public class SignUpController {
     }
 
     /**
+     * Handles the back button click. This method navigates back to the login screen.
+     */
+    @FXML
+    private void handleBackClick(ActionEvent event) {
+        navigateToLogin(event);
+    }
+
+    /**
      * Validates the email format using a regular expression.
      * @param email The email to validate.
-
+     * @return True if the email is valid, false otherwise.
      */
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@gmail\\.com$";
@@ -145,18 +154,18 @@ public class SignUpController {
 
     /**
      * Simulates sending a verification email to the user.
-
      * @param email The user's email.
      */
     private void sendVerificationEmail(String email) {
         // Simulate the email sending process
         System.out.println("Verification email sent to " + email + ". Please check your inbox.");
-
     }
 
     /**
      * Utility method to show an alert dialog.
-
+     * @param title The title of the alert.
+     * @param message The message to display.
+     * @param alertType The type of alert.
      */
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
