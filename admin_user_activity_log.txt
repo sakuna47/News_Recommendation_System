@@ -181,3 +181,6 @@ Admin deleted user with email: sakuna3@gmail.com and 2 associated interactions.
 Admin accessed the Add Article screen.
 Admin viewed the list of users.
 Admin viewed the articles.
+Admin viewed the list of users.
+Admin viewed the list of users.
+Admin deleted user with email: sakuna8@gmail.com and 1 associated interactions.

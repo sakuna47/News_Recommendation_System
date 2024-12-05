@@ -15,7 +15,6 @@ import com.mongodb.client.MongoClients;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
-
 import java.io.IOException;
 import java.util.List;
 
@@ -36,7 +35,6 @@ public class AdminViewArticlesController {
         // Load the AdminView.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/newsrecommendationsystem/Admin/AdminView.fxml"));
         AnchorPane adminView = loader.load();  // Load the view
-
 
         Stage stage = (Stage) back.getScene().getWindow();
 
@@ -147,5 +145,4 @@ public class AdminViewArticlesController {
             }
         });
     }
-
 }

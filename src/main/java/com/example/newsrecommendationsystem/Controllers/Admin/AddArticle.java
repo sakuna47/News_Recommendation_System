@@ -1,15 +1,13 @@
 package com.example.newsrecommendationsystem.Controllers.Admin;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoClients;
-import org.bson.Document;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class AddArticle {
@@ -32,6 +30,8 @@ public class AddArticle {
     @FXML
     private TextField title;
 
+    private final ArticleService articleService = new ArticleService();
+
     // Handle the Add button click to store the article in MongoDB
     @FXML
     public void handleAddButtonClick() {
@@ -43,51 +43,37 @@ public class AddArticle {
 
         // Check if any field is empty
         if (articleTitle.isEmpty() || articleContent.isEmpty() || articleCategory.isEmpty() || articleSource.isEmpty()) {
-            // Show an error alert if any field is empty
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("All fields must be filled out.\nPlease fill in title, content, category, and source.");
-            alert.showAndWait();
+            showAlert("Error", "All fields must be filled out.\nPlease fill in title, content, category, and source.", Alert.AlertType.ERROR);
             return; // Exit the method without adding the article
         }
 
-        try {
-            // Connect to MongoDB
-            MongoDatabase database = MongoClients.create("mongodb://localhost:27017").getDatabase("CwOOD");
-            MongoCollection<Document> articlesCollection = database.getCollection("Articles");
+        // Attempt to add the article
+        boolean success = articleService.addArticle(articleTitle, articleContent, articleCategory, articleSource);
 
-            // Create a new document with the article data
-            Document articleDoc = new Document("title", articleTitle)
-                    .append("content", articleContent)
-                    .append("category", articleCategory)
-                    .append("source", articleSource);
-
-            // Insert the document into the collection
-            articlesCollection.insertOne(articleDoc);
-
-            // Show success message
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Article added successfully.");
-            alert.showAndWait();
-
+        if (success) {
+            showAlert("Success", "Article added successfully.", Alert.AlertType.INFORMATION);
             // Clear the fields after insertion
-            title.clear();
-            content.clear();
-            category.clear();
-            source.clear();
-
-        } catch (Exception e) {
-            // Catch any exceptions and show an error message
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("An error occurred while adding the article.\nPlease try again later.");
-            alert.showAndWait();
+            clearFields();
+        } else {
+            showAlert("Error", "An error occurred while adding the article.\nPlease try again later.", Alert.AlertType.ERROR);
         }
+    }
+
+    // Show an alert dialog
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    // Clear all input fields
+    private void clearFields() {
+        title.clear();
+        content.clear();
+        category.clear();
+        source.clear();
     }
 
     // Handle the Back button click to load the AdminView.fxml
@@ -103,11 +89,7 @@ public class AddArticle {
         } catch (IOException e) {
             // Catch any exceptions while loading AdminView.fxml
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("An error occurred while navigating to the Admin View.\nPlease try again later.");
-            alert.showAndWait();
+            showAlert("Error", "An error occurred while navigating to the Admin View.\nPlease try again later.", Alert.AlertType.ERROR);
         }
     }
 }
